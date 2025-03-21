@@ -3,7 +3,7 @@ import { readdirSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
 
 const extensionDir = resolve(__dirname, '../../extension');
-const distDir = resolve(extensionDir, 'renderer');
+const distDir = resolve(extensionDir, 'js');
 
 const isDev = process.env.NODE_ENV === 'development';
 const entryDir = resolve(__dirname, 'entries');
@@ -21,6 +21,7 @@ export default defineConfig({
     entry: entryFiles,
   },
   output: {
+    target: 'web-worker',
     cleanDistPath: true,
     distPath: {
       root: distDir,
