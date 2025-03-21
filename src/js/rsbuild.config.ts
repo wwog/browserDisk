@@ -1,5 +1,4 @@
 import { defineConfig } from '@rsbuild/core';
-import { pluginReact } from '@rsbuild/plugin-react';
 import { readdirSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
 
@@ -17,7 +16,7 @@ console.log('[RunTime Config] isDev:', isDev);
 console.log('[RunTime Config] entry:', entryFiles);
 
 export default defineConfig({
-  plugins: [pluginReact()],
+  plugins: [],
   source: {
     entry: entryFiles,
   },
