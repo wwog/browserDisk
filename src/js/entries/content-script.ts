@@ -63,6 +63,14 @@ const opfsMethods = {
     const _res = await mkdir(path);
     return _res.unwrap();
   },
+  writeTextFileByString: async (
+    path: string,
+    content: string,
+    options?: any
+  ) => {
+    const _res = await writeFile(path, content, options);
+    return _res.unwrap();
+  },
   writeFileByArray: async (
     path: string,
     data: Array<number>,

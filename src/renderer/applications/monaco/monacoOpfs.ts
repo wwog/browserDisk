@@ -1,5 +1,4 @@
 import * as monaco from 'monaco-editor';
-import { readTextFile, writeFile } from '@happy-js/happy-opfs';
 import { getLanguage } from './utils';
 import { callContentScriptOpfs } from '../../services/fileService/helper';
 
@@ -20,10 +19,7 @@ export async function saveModelToOpfs(
   model: monaco.editor.ITextModel
 ): Promise<void> {
   const content = model.getValue();
-
-  const encoder = new TextEncoder();
-  const data = encoder.encode(content);
-  await writeFile(filePath, data, {
+  await callContentScriptOpfs('writeTextFileByString', filePath, content, {
     create: true,
   });
 }

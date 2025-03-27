@@ -37,23 +37,6 @@ export default defineConfig({
     },
     legalComments: 'none',
   },
-  tools: {
-    rspack: {
-      resolveLoader: {
-        alias: {
-          'worker-loader': require.resolve('worker-rspack-loader'),
-        },
-      },
-      module: {
-        rules: [
-          {
-            test: /\.worker\.js$/,
-            loader: 'worker-rspack-loader',
-          },
-        ],
-      },
-    },
-  },
   dev: {
     hmr: false,
     liveReload: false,
