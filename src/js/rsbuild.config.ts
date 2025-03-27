@@ -48,4 +48,7 @@ export default defineConfig({
     },
     assetPrefix: './',
   },
+  server: {
+    port: 3100,
+  },
 });

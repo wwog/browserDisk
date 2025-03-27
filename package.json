@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm --filter \"./src/*\" dev",
-    "build": "pnpm --filter \"./src/*\" build"
+    "dev": "pnpm --filter js --filter renderer dev",
+    "build": "pnpm --filter js --filter renderer build"
   },
   "keywords": [],
   "author": "",

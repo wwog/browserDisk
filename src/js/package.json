@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "rsbuild preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@happy-js/happy-opfs": "npm:@jsr/happy-js__happy-opfs@^1.8.4"
+  },
   "devDependencies": {
     "@types/node": "^22.13.10"
   }

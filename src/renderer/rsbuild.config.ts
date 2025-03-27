@@ -37,6 +37,8 @@ export default defineConfig({
     legalComments: 'none',
   },
   dev: {
+    hmr: false,
+    liveReload: false,
     writeToDisk: (filePath) => {
       const excludePatterns = [
         /\.hot-update\.js$/,
@@ -47,5 +49,8 @@ export default defineConfig({
       return !excludePatterns.some((pattern) => pattern.test(filePath));
     },
     assetPrefix: './',
+  },
+  server: {
+    port: 3101,
   },
 });

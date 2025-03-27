@@ -11,7 +11,8 @@
     "256": "256.png"
   },
   "background": {
-    "service_worker": "js/service-worker.js"
+    "service_worker": "js/service-worker.js",
+    "type": "module"
   },
   "content_scripts": [
     {
