@@ -2,6 +2,7 @@ import { defineConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { readdirSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
+import { createRequire } from 'module';
 
 const extensionDir = resolve(__dirname, '../../extension');
 const distDir = resolve(extensionDir, 'renderer');
@@ -35,6 +36,23 @@ export default defineConfig({
       css: '[name].css',
     },
     legalComments: 'none',
+  },
+  tools: {
+    rspack: {
+      resolveLoader: {
+        alias: {
+          'worker-loader': require.resolve('worker-rspack-loader'),
+        },
+      },
+      module: {
+        rules: [
+          {
+            test: /\.worker\.js$/,
+            loader: 'worker-rspack-loader',
+          },
+        ],
+      },
+    },
   },
   dev: {
     hmr: false,

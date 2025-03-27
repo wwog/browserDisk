@@ -1,8 +1,9 @@
-import { Emitter } from 'monaco-editor';
 import type { OpfsUsage } from '../../../lib/types';
 import { normalize, resolve } from '../../../lib/opfsPath';
 import { once } from '../../../lib/sundry';
-import { callContentScriptOpfs, getOpfsUsage } from './helper';
+import { callContentScriptOpfs, getOpfsUsage, saveToOpfs } from './helper';
+import { Emitter } from '../../../lib/event';
+import type { FileSystemItem } from '../../../js/entries/content-script';
 
 function checkPathValidity(path: string) {
   const isValid = path.startsWith(ROOT_DIR);
@@ -12,15 +13,6 @@ function checkPathValidity(path: string) {
 }
 
 const ROOT_DIR = '/';
-
-export interface FileSystemItem {
-  name: string;
-  path: string;
-  kind: 'directory' | 'file' | 'dbFile';
-  handle: FileSystemHandle;
-  url?: string;
-  subname?: string;
-}
 
 export class FileService {
   private static instance: FileService;
@@ -32,7 +24,6 @@ export class FileService {
   }
   private _currentPath: string = ROOT_DIR;
   private _onRefreshing = new Emitter<boolean>();
-  static ImageExt = ['.png', '.jpg', 'jpeg'];
   onRefreshing = this._onRefreshing.event;
 
   currentItems: FileSystemItem[] = [];
@@ -98,6 +89,28 @@ export class FileService {
   };
 
   save = async (handles: FileSystemHandle[]) => {
-    
+    await saveToOpfs(this.currentPath, handles);
+    await this.refresh();
+  };
+
+  remove = async (paths: string[]) => {
+    const promises = paths.map((path) => {
+      const newPath = resolve(this.currentPath, path);
+      checkPathValidity(newPath);
+      return callContentScriptOpfs('remove', newPath);
+    });
+    await Promise.all(promises);
+    await this.refresh();
+  };
+
+  saveToDisk = async (paths: string[]) => {
+    await callContentScriptOpfs('saveToDisk', paths);
+  };
+
+  createFile = async (name: string) => {
+    const newPath = resolve(this.currentPath, name);
+    checkPathValidity(newPath);
+    await callContentScriptOpfs('createFile', newPath);
+    await this.refresh();
   };
 }

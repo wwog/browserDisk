@@ -1,0 +1,1 @@
+export const ImageExt = ['.png', '.jpg', 'jpeg'];
