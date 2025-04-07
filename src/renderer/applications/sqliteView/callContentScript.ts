@@ -12,3 +12,10 @@ export async function callContentScriptSqlMethod<T = any>(
     },
   });
 }
+
+export async function exec<T = any>(sql: string, options?: any) {
+  return callContentScriptSqlMethod<T>('exec', sql, {
+    rowMode: 'object',
+    ...options,
+  });
+}

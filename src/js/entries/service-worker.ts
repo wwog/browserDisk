@@ -52,6 +52,7 @@ const methods = {
     if (res[0]?.result?.error) {
       throw new Error(res[0].result.error);
     }
+    console.log(res);
     return res[0]?.result?.result;
   },
 };

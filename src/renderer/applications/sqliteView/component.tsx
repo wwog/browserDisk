@@ -1,18 +1,19 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import type { ApplicationProps } from '../../services/appService/types';
 //@ts-ignore
 import css from './index.module.css';
 import { If } from '../../components/Common/If';
 import { callContentScriptSqlMethod } from './callContentScript';
 import { Button } from '../../components/Button';
+import { getAllTables } from './utils';
 
 export const SqliteView: FC<ApplicationProps> = () => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     if (isConnected) {
-      callContentScriptSqlMethod('exec', 'SELECT 1').then((res) => {
-        console.log('exec', res);
+      getAllTables().then((res) => {
+        console.log('getAllTables', res);
       });
       return;
     }

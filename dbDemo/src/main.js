@@ -155,9 +155,8 @@ sqlSelectElement.addEventListener('change', () => {
   renderSql();
 });
 
-globalThis.$sql_view_exec = (sql) => {
-  workerRequest.execute('test', sql).then((result) => {
-    console.log('result', result);
+globalThis.$sql_view_exec = (sql, opt) => {
+  workerRequest.execute('test', sql, opt).then((result) => {
     addLine(`sql: ${sql}`, {
       color: 'f2e1ef',
     });
@@ -184,3 +183,4 @@ executeElement.addEventListener('click', async () => {
 
 renderConnected();
 sqlSelectElement.dispatchEvent(new CustomEvent('change'));
+uniqueService.claimOwnership();
