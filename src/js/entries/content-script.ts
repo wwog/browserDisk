@@ -1,4 +1,3 @@
-import { log } from '../../lib/log';
 import {
   exists,
   isFileHandle,
@@ -13,8 +12,9 @@ import { saveToDisk } from '../utils/saveToDisk';
 import { extname, resolve } from '../../lib/opfsPath';
 import { ImageExt } from '../../lib/const';
 import { decodeSAHPoolFilename, SAHPoolDirName } from '../utils/sqliteSAHPool';
+import { PromiseWithResolvers, safeRandomUUID } from '../../lib/sundry';
 
-log('Content script loaded');
+console.log('Content script loaded');
 export interface FileSystemItem {
   name: string;
   kind: 'directory' | 'file' | 'dbFile';
@@ -121,13 +121,34 @@ const opfsMethods = {
   },
 };
 
+async function callService(method: string, ...args: any[]) {
+  const { promise, reject, resolve } = PromiseWithResolvers();
+  chrome.runtime.sendMessage(
+    {
+      type: 'callOpfs',
+      payload: {
+        method,
+        args,
+      },
+    },
+    (res) => {
+      if (res.error) {
+        reject(res.error);
+      } else {
+        resolve(res.result);
+      }
+    }
+  );
+  return promise;
+}
+
 async function handleCallOpfs(
   payload: { method: string; args: any[] },
   sendResponse: (response?: any) => void
 ) {
   const method = payload.method;
   const args = payload.args;
-  log('callOpfs', method, args);
+  console.log('handleCallOpfs', method, args);
   const resPayload: {
     result: any | null;
     error: string | null;
@@ -155,14 +176,7 @@ async function handleCallOpfs(
 }
 
 const sqliteViewMethods = {
-  checkConnection: async () => {
-    return (
-      //@ts-ignore
-      globalThis.$sql_view_exec !== undefined &&
-      //@ts-ignore
-      typeof globalThis.$sql_view_exec === 'function'
-    );
-  },
+  checkConnection: () => callService('checkConnection'),
   exec: async (sql: string, option: any) => {
     //@ts-ignore
     if (globalThis.$sql_view_exec) {
@@ -184,7 +198,7 @@ async function handleCallSqliteView(
 ) {
   const method = payload.method;
   const args = payload.args;
-  log('callOpfs', method, args);
+  console.log('handleCallSqliteView', method, args);
   const resPayload: {
     result: any | null;
     error: string | null;
@@ -194,7 +208,8 @@ async function handleCallSqliteView(
   };
   try {
     if (method in sqliteViewMethods) {
-      const _res = await (sqliteViewMethods as any)[method](...args);
+      const methodFunc = (sqliteViewMethods as any)[method];
+      const _res = await methodFunc(...args);
       resPayload.result = _res;
     } else {
       console.error(`Method ${method} not found`, method === 'writeFileStream');
@@ -212,7 +227,7 @@ async function handleCallSqliteView(
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  log('Content script received message:', request, sender);
+  console.log('received message:', request);
   const response: {
     result: any | null;
     error: string | null;

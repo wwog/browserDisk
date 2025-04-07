@@ -4,37 +4,10 @@ import type { ApplicationProps } from '../../services/appService/types';
 import css from './index.module.css';
 import { If } from '../../components/Common/If';
 import { callContentScriptSqlMethod } from './callContentScript';
+import { Button } from '../../components/Button';
 
-export const SqliteView: FC<ApplicationProps> = (props) => {
+export const SqliteView: FC<ApplicationProps> = () => {
   const [isConnected, setIsConnected] = useState(false);
-  const checkConnectionTimer = useRef<ReturnType<typeof setInterval> | null>(
-    null
-  );
-  const clearTimer = () => {
-    if (checkConnectionTimer.current) {
-      clearInterval(checkConnectionTimer.current);
-      checkConnectionTimer.current = null;
-    }
-  };
-  useEffect(() => {
-    checkConnectionTimer.current = setInterval(async () => {
-      const connectionStatus = await callContentScriptSqlMethod(
-        'checkConnection'
-      );
-      console.log('checkConnection', connectionStatus);
-      setIsConnected(connectionStatus);
-    }, 1000);
-    return () => {
-      clearTimer();
-    };
-  }, []);
-  useEffect(() => {
-    if (isConnected) {
-      clearTimer();
-      console.log('Connected to Sqlite View');
-    }
-  }, [isConnected]);
-
 
   return (
     <div className={css.container}>
@@ -57,6 +30,15 @@ export const SqliteView: FC<ApplicationProps> = (props) => {
             future, direct opening will be supported. For non-handle forms,
             direct opening is better
           </div>
+          <Button
+            onClick={async () => {
+              const res = await callContentScriptSqlMethod('checkConnection');
+              console.log('checkConnection', res);
+              setIsConnected(res);
+            }}
+          >
+            Connect
+          </Button>
         </If.Else>
       </If>
     </div>
