@@ -17,13 +17,15 @@ export const SelectorItem: FC<SelectorItemProps> = (props) => {
     >
       <div className="item-content">
         <div>{children}</div>
-        <Close
-          className="item-close"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose?.();
-          }}
-        />
+        {onClose && (
+          <Close
+            className="item-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose?.();
+            }}
+          />
+        )}
       </div>
     </div>
   );

@@ -1,11 +1,17 @@
 import { log } from '../../lib/log';
 
 log('Service worker loaded');
+chrome.runtime.onConnect.addListener((port) => {
+  const messageHandler = (message: any, port: chrome.runtime.Port) => {};
+  port.onMessage.addListener(messageHandler);
 
-chrome.runtime.onInstalled.addListener(() => {
-  log('Service worker installed');
+  port.onDisconnect.addListener(() => {
+    port.onMessage.removeListener(messageHandler);
+  });
+
+  chrome.tabs.onUpdated.addListener(() => {
+    port.postMessage({
+      type: 'tabs_onUpdate',
+    });
+  });
 });
-
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//   log('Tab updated:', tabId, changeInfo, tab);
-// });

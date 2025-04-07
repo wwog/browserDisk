@@ -1,8 +1,4 @@
 import type { FC } from 'react';
-import {
-  callContentScriptOpfs,
-  saveToOpfs,
-} from '../../../../services/fileService/helper';
 import { DropWrapper } from '../../../../components/DropWrapper';
 import { useOpfsViewerStore } from '../../../../hooks/useOpfsViewerStore';
 import { useAppService } from '../../../../hooks/useAppService';
@@ -17,6 +13,7 @@ import { ArrayRender } from '../../../../components/Common/ArrayRender';
 import { List } from '../../../../components/List';
 import toast from 'react-hot-toast';
 import { ImageExt } from '../../../../../lib/const';
+import { sqliteViewApplication } from '../../../../applications/sqliteView';
 
 export const OpfsViewer: FC = () => {
   const { currentItems, canGoBack, fileService, currentPath } =
@@ -75,6 +72,15 @@ export const OpfsViewer: FC = () => {
           </Button>
 
           <div>{currentPath}</div>
+        </div>
+        <div>
+          <Button
+            onClick={() =>
+              appService.startStandaloneApp(sqliteViewApplication.id)
+            }
+          >
+            SqliteView
+          </Button>
         </div>
       </div>
       <DropWrapper

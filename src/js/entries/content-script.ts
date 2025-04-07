@@ -154,6 +154,63 @@ async function handleCallOpfs(
   sendResponse(resPayload);
 }
 
+const sqliteViewMethods = {
+  checkConnection: async () => {
+    return (
+      //@ts-ignore
+      globalThis.$sql_view_exec !== undefined &&
+      //@ts-ignore
+      typeof globalThis.$sql_view_exec === 'function'
+    );
+  },
+  exec: async (sql: string, option: any) => {
+    //@ts-ignore
+    if (globalThis.$sql_view_exec) {
+      //@ts-ignore
+      const res = await globalThis.$sql_view_exec(sql, option);
+      if (res.error) {
+        throw new Error(res.error);
+      }
+      return res.result;
+    } else {
+      throw new Error('SqliteView is not connected');
+    }
+  },
+};
+
+async function handleCallSqliteView(
+  payload: { method: string; args: any[] },
+  sendResponse: (response?: any) => void
+) {
+  const method = payload.method;
+  const args = payload.args;
+  log('callOpfs', method, args);
+  const resPayload: {
+    result: any | null;
+    error: string | null;
+  } = {
+    result: null,
+    error: null,
+  };
+  try {
+    if (method in sqliteViewMethods) {
+      const _res = await (sqliteViewMethods as any)[method](...args);
+      resPayload.result = _res;
+    } else {
+      console.error(`Method ${method} not found`, method === 'writeFileStream');
+      throw new Error(`Method ${method} not found`);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      resPayload.error = error.message;
+    } else {
+      resPayload.error = String(error);
+    }
+  }
+  console.log('callOpfs response', resPayload);
+  sendResponse(resPayload);
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   log('Content script received message:', request, sender);
   const response: {
@@ -166,6 +223,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.type) {
     case 'callOpfs':
       handleCallOpfs(request.payload, sendResponse);
+      break;
+    case 'sqlite_view':
+      handleCallSqliteView(request.payload, sendResponse);
       break;
     default:
       response.error = `Unknown request type: ${request.type}`;

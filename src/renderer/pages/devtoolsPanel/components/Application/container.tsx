@@ -23,6 +23,8 @@ export const ApplicationContainer: FC = () => {
                 <app.component
                   filePath={item.filePath}
                   extName={item.extName}
+                  appId={item.appId}
+                  instanceId={item.id}
                 ></app.component>
               </div>
             );

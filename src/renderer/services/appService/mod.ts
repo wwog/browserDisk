@@ -46,8 +46,8 @@ export class ApplicationService {
   getApplicationsByFileType(fileType: string) {
     return this.registerApps.filter(
       (app) =>
-        app.supportedFileTypes.includes(fileType) ||
-        app.supportedFileTypes.includes('*')
+        (app.supportedFileTypes ?? []).includes(fileType) ||
+        (app.supportedFileTypes ?? []).includes('*')
     );
   }
 
@@ -61,6 +61,40 @@ export class ApplicationService {
     );
   }
 
+  // 添加新方法以启动独立应用
+  startStandaloneApp(appId: string) {
+    const app = this.findApp(appId);
+
+    if (!app) {
+      throw new Error(`Application with ID ${appId} not found`);
+    }
+
+    // 如果应用是单例并且已经开启，则激活现有实例
+    if (app.singleton) {
+      const existingInstance = this.openApps.find(
+        (instance) => instance.appId === appId
+      );
+      if (existingInstance) {
+        this._onActiveChange.fire(existingInstance);
+        return existingInstance;
+      }
+    }
+
+    // 创建新的应用实例
+    const instance: ApplicationInstance = {
+      id: safeRandomUUID(),
+      appId: app.id,
+      showName: app.showName?.(app.name) ?? app.name,
+      active: true,
+      // filePath和extName不再是必需的
+    };
+
+    this.openApps.push(instance);
+    this._onActiveChange.fire(instance);
+    this._onAppOpen.fire(instance);
+    return instance;
+  }
+
   openFile(filepath: string, appId?: string) {
     const fileExt = extname(filepath);
 
@@ -71,15 +105,18 @@ export class ApplicationService {
       }
       appId = apps[0].id;
     }
+
     const existing = this.isOpen(filepath, appId);
     if (existing) {
       this._onActiveChange.fire(existing);
       return existing;
     }
+
     const app = this.findApp(appId);
     if (app === undefined) {
       throw new Error(`Application with ID ${appId} not found`);
     }
+
     const instance: ApplicationInstance = {
       id: safeRandomUUID(),
       appId: app.id,
@@ -88,12 +125,12 @@ export class ApplicationService {
       showName: app.showName?.(app.name, filepath) ?? filepath.slice(1),
       extName: fileExt,
     };
+
     this.openApps.push(instance);
     this._onActiveChange.fire(instance);
     this._onAppOpen.fire(instance);
     return instance;
   }
-
   closeApp(insId: string) {
     const index = this.openApps.findIndex((app) => app.id === insId);
     const closeInstance = this.openApps[index];

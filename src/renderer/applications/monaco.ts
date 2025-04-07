@@ -1,4 +1,7 @@
-import type { Application } from '../services/appService/types';
+import {
+  ApplicationType,
+  type Application,
+} from '../services/appService/types';
 import { MonacoEditor } from './monaco/component';
 import * as monaco from 'monaco-editor';
 import { basename } from '../../lib/opfsPath';
@@ -48,5 +51,6 @@ export const monacoApplication: Application = {
   icon: '📝',
   supportedFileTypes: ['*'],
   component: MonacoEditor,
-  showName: (_: string, path: string) => basename(path),
+  showName: (_: string, path?: string) => basename(path!),
+  type: ApplicationType.FileViewer,
 };
