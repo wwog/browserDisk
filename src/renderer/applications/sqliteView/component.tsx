@@ -9,6 +9,15 @@ import { Button } from '../../components/Button';
 export const SqliteView: FC<ApplicationProps> = () => {
   const [isConnected, setIsConnected] = useState(false);
 
+  useEffect(() => {
+    if (isConnected) {
+      callContentScriptSqlMethod('exec', 'SELECT 1').then((res) => {
+        console.log('exec', res);
+      });
+      return;
+    }
+  }, [isConnected]);
+
   return (
     <div className={css.container}>
       <If condition={isConnected}>

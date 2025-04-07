@@ -38,6 +38,22 @@ const methods = {
     });
     return res[0]?.result;
   },
+  exec: async (sql: string, option: any) => {
+    const tabId = await getCurrentId();
+    const res = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: async (sql: string, option: any) => {
+        //@ts-ignore
+        return await globalThis.$sql_view_exec(sql, option);
+      },
+      args: [sql, option],
+      world: 'MAIN',
+    });
+    if (res[0]?.result?.error) {
+      throw new Error(res[0].result.error);
+    }
+    return res[0]?.result?.result;
+  },
 };
 
 async function handleCallServiceWorker(

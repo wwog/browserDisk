@@ -177,19 +177,7 @@ async function handleCallOpfs(
 
 const sqliteViewMethods = {
   checkConnection: () => callService('checkConnection'),
-  exec: async (sql: string, option: any) => {
-    //@ts-ignore
-    if (globalThis.$sql_view_exec) {
-      //@ts-ignore
-      const res = await globalThis.$sql_view_exec(sql, option);
-      if (res.error) {
-        throw new Error(res.error);
-      }
-      return res.result;
-    } else {
-      throw new Error('SqliteView is not connected');
-    }
-  },
+  exec: (sql: string, option: any) => callService('exec', sql, option),
 };
 
 async function handleCallSqliteView(
