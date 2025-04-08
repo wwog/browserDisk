@@ -155,15 +155,15 @@ sqlSelectElement.addEventListener('change', () => {
   renderSql();
 });
 
-globalThis.$sql_view_exec = (sql, opt) => {
-  workerRequest.execute('test', sql, opt).then((result) => {
-    addLine(`sql: ${sql}`, {
-      color: 'f2e1ef',
-    });
-    addLine(`result: ${JSON.stringify(result)}`, {
-      color: 'rgb(40, 252, 40)',
-    });
+globalThis.$sql_view_exec = async (sql, opt) => {
+  const result = await workerRequest.execute('test', sql, opt);
+  addLine(`sql: ${sql}`, {
+    color: 'f2e1ef',
   });
+  addLine(`result: ${JSON.stringify(result)}`, {
+    color: 'rgb(40, 252, 40)',
+  });
+  return result;
 };
 
 executeElement.addEventListener('click', async () => {

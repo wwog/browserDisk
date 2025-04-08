@@ -9,13 +9,19 @@ import { getAllTables } from './utils';
 
 export const SqliteView: FC<ApplicationProps> = () => {
   const [isConnected, setIsConnected] = useState(false);
-
+  const connect = async () => {
+    const res = await callContentScriptSqlMethod('checkConnection');
+    console.log('checkConnection', res);
+    setIsConnected(res);
+  };
   useEffect(() => {
     if (isConnected) {
       getAllTables().then((res) => {
         console.log('getAllTables', res);
       });
       return;
+    } else {
+      connect();
     }
   }, [isConnected]);
 
@@ -40,15 +46,7 @@ export const SqliteView: FC<ApplicationProps> = () => {
             future, direct opening will be supported. For non-handle forms,
             direct opening is better
           </div>
-          <Button
-            onClick={async () => {
-              const res = await callContentScriptSqlMethod('checkConnection');
-              console.log('checkConnection', res);
-              setIsConnected(res);
-            }}
-          >
-            Connect
-          </Button>
+          <Button onClick={connect}>Connect</Button>
         </If.Else>
       </If>
     </div>

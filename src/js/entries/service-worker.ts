@@ -44,16 +44,14 @@ const methods = {
       target: { tabId },
       func: async (sql: string, option: any) => {
         //@ts-ignore
-        return await globalThis.$sql_view_exec(sql, option);
+        const res = await globalThis.$sql_view_exec(sql, option);
+        console.log('exec res', res);
+        return res;
       },
       args: [sql, option],
       world: 'MAIN',
     });
-    if (res[0]?.result?.error) {
-      throw new Error(res[0].result.error);
-    }
-    console.log(res);
-    return res[0]?.result?.result;
+    return res[0]?.result;
   },
 };
 
