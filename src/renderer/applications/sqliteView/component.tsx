@@ -6,18 +6,20 @@ import { If } from '../../components/Common/If';
 import { callContentScriptSqlMethod } from './callContentScript';
 import { Button } from '../../components/Button';
 import { getAllTables } from './utils';
+import { TableRender } from './TableRender';
+import { sqliteViewStore } from './store';
 
 export const SqliteView: FC<ApplicationProps> = () => {
   const [isConnected, setIsConnected] = useState(false);
+  const { setTables } = sqliteViewStore();
   const connect = async () => {
     const res = await callContentScriptSqlMethod('checkConnection');
-    console.log('checkConnection', res);
     setIsConnected(res);
   };
   useEffect(() => {
     if (isConnected) {
       getAllTables().then((res) => {
-        console.log('getAllTables', res);
+        setTables(res);
       });
       return;
     } else {
@@ -28,6 +30,7 @@ export const SqliteView: FC<ApplicationProps> = () => {
   return (
     <div className={css.container}>
       <If condition={isConnected}>
+        <TableRender />
         <If.Else>
           <div>Connect to Sqlite View Step:</div>
           <div>1. Open Sqlite Database</div>
