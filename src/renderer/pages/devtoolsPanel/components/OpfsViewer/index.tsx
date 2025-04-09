@@ -150,6 +150,13 @@ export const OpfsViewer: FC = () => {
                     <List.Item onClick={() => fileService.refresh()}>
                       🔄 Refresh
                     </List.Item>
+                    <List.Item
+                      onClick={() =>
+                        appService.startStandaloneApp(sqliteViewApplication.id)
+                      }
+                    >
+                      Sqlite View
+                    </List.Item>
                   </List>
                 </If.Else>
               </If>

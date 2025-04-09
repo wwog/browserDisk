@@ -110,3 +110,7 @@ export function safeRandomUUID() {
     return v.toString(16);
   });
 }
+
+export const clsx = (...args: any[]) => {
+  return args.filter(Boolean).join(' ');
+};
