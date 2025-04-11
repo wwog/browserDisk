@@ -17,8 +17,22 @@ export const getAllTables = async () => {
           indexItem.columns = columns;
         })
       );
+      const hasPrimaryKey = columns.some((column) => column.pk === 1);
 
-      table.columns = columns;
+      table.hasPrimaryKey = hasPrimaryKey;
+      if (table.hasPrimaryKey === false) {
+        columns.push({
+          name: 'rowid',
+          cid: -1,
+          dflt_value: null,
+          notnull: 0,
+          pk: 1,
+          type: 'INTEGER',
+        });
+      }
+      table.columns = columns.sort((a, b) => {
+        return a.cid - b.cid;
+      });
       table.indexes = indexes;
     })
   );

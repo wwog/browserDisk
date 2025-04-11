@@ -94,3 +94,26 @@
     padding: 0;
   }
 }
+
+.columnName {
+  font-size: 14px;
+  color: #4a4a4a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .pk {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    background-color: #e25518;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 10px;
+    width: 18px;
+    height: 18px;
+  }
+  
+}
+

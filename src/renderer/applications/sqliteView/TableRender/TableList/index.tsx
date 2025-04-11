@@ -7,7 +7,11 @@ import styles from './index.module.css';
 import { If } from '../../../../components/Common/If';
 
 export const TableList: FC = () => {
-  const { selected, tables, setSelected } = sqliteViewStore();
+  const {
+    selectedTable: selected,
+    tables,
+    setSelectedTable: setSelected,
+  } = sqliteViewStore();
   console.log('tables', tables);
   return (
     <div className={styles.tableListWrapper}>
@@ -39,7 +43,12 @@ export const TableList: FC = () => {
                       {table.columns.map((column) => (
                         <div key={column.name} className={styles.column}>
                           <div>({column.type ? column.type : 'unknown'})</div>
-                          <div>{column.name}</div>
+                          <div className={styles.columnName}>
+                            <If condition={column.pk === 1}>
+                              <div className={styles.pk}>P</div>
+                            </If>
+                            {column.name}
+                          </div>
                         </div>
                       ))}
                       <If.Else>
