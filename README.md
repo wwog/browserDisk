@@ -1,29 +1,17 @@
-# Rsbuild project
+# BrowserDisk (Web FileSystem Resource manager)
 
-## Setup
+*** Under development ***
 
-Install the dependencies:
+## Feature
 
-```bash
-pnpm install
-```
+### 1. Access folder
+### 2. New, delete, drag, box, click file
+![Image 1](assets/1.png)
+![Image 3](assets/3.png)
+### 3. File View
+### 4. Sqlite View
+![Image 2](assets/2.png)
 
-## Get started
 
-Start the dev server:
 
-```bash
-pnpm dev
-```
 
-Build the app for production:
-
-```bash
-pnpm build
-```
-
-Preview the production build locally:
-
-```bash
-pnpm preview
-```
