@@ -13,5 +13,6 @@ dist/
 .idea
 
 
+*.zip
 extension/js
 extension/renderer
