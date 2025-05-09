@@ -12,7 +12,6 @@ export const TableList: FC = () => {
     tables,
     setSelectedTable: setSelected,
   } = sqliteViewStore();
-  console.log('tables', tables);
   return (
     <div className={styles.tableListWrapper}>
       <div className={styles.top}>
