@@ -27,7 +27,7 @@ swConnection.onMessage.addListener((message) => {
 export const DevtoolsPanelPage: FC = () => {
   return (
     <Allotment>
-      <Allotment.Pane snap minSize={160} maxSize={720} preferredSize={410}>
+      <Allotment.Pane snap minSize={160} maxSize={720} preferredSize={333}>
         <Toaster position="bottom-left" />
         <OpfsViewer />
       </Allotment.Pane>

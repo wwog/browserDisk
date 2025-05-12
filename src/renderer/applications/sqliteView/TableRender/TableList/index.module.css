@@ -1,8 +1,8 @@
 .tableListWrapper {
-  min-width: min(324px, 25%);
+  min-width: min(280px, 20%);
 
   background-color: #dfe1e2;
-  padding: 16px;
+  padding: 5px;
   user-select: none;
   display: flex;
   flex-direction: column;
@@ -19,7 +19,6 @@
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
 
     .noTable {
       padding: 4px;
