@@ -14,7 +14,11 @@ export async function getRows(params: IGetRowsParams) {
   }
 
   try {
-    const count = await exec('SELECT COUNT(*) FROM ' + selectedTable.name);
+    const count = await exec('SELECT COUNT(*) FROM ' + selectedTable.name).then(
+      (res) => {
+        return res[0]['COUNT(*)'];
+      }
+    );
     const query = new QueryBuilder<any>()
       .select(selectedTable.columns.map((item) => item.name))
       .from(selectedTable.name)
@@ -24,7 +28,7 @@ export async function getRows(params: IGetRowsParams) {
     const data = await exec(query[0], {
       bind: query[1],
     });
-
+    console.log('count', count);
     successCallback(data, count);
   } catch (error) {
     failCallback();
