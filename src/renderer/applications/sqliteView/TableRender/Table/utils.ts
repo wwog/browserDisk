@@ -3,34 +3,43 @@ import { sqliteViewStore } from '../../store';
 import { QueryBuilder } from '../../queryBuilder/query';
 import { exec } from '../../callContentScript';
 
-export async function getRows(params: IGetRowsParams) {
-  const { startRow, endRow, successCallback, failCallback } = params;
+export async function getDataByGetRowsParams(params: IGetRowsParams) {
+  const { startRow, endRow } = params;
   const pageSize = endRow - startRow;
   const page = Math.floor(startRow / pageSize) + 1;
   const selectedTable = sqliteViewStore.getState().selectedTable;
+  const result = {
+    count: 0,
+    data: [],
+  };
   if (!selectedTable) {
-    successCallback([]);
-    return;
+    return result;
   }
 
-  try {
-    const count = await exec('SELECT COUNT(*) FROM ' + selectedTable.name).then(
-      (res) => {
-        return res[0]['COUNT(*)'];
-      }
-    );
-    const query = new QueryBuilder<any>()
-      .select(selectedTable.columns.map((item) => item.name))
-      .from(selectedTable.name)
-      .limit(pageSize)
-      .offset(pageSize * (page - 1))
-      .toSQL();
-    const data = await exec(query[0], {
-      bind: query[1],
-    });
-    console.log('count', count);
-    successCallback(data, count);
-  } catch (error) {
-    failCallback();
+  const query = new QueryBuilder<any>()
+    .select(selectedTable.columns.map((item) => item.name))
+    .from(selectedTable.name)
+    .limit(pageSize)
+    .offset(pageSize * (page - 1))
+    .toSQL();
+  const data = await exec(query[0], {
+    bind: query[1],
+  });
+  const count = await getCount(selectedTable.name);
+  result.data = data;
+  result.count = count;
+  return result;
+}
+
+export async function getCount(tableName?: string) {
+  const selectedTable = sqliteViewStore.getState().selectedTable;
+
+  const tName = tableName ? tableName : selectedTable?.name;
+  if (!tName) {
+    throw new Error('No table selected');
   }
+  const count = await exec('SELECT COUNT(*) FROM ' + tName).then((res) => {
+    return res[0]['COUNT(*)'] as number;
+  });
+  return count;
 }
