@@ -1,6 +1,3 @@
-import { log } from '../../lib/log';
-
-log('Service worker loaded');
 chrome.runtime.onConnect.addListener((port) => {
   const messageHandler = (message: any, port: chrome.runtime.Port) => {};
   port.onMessage.addListener(messageHandler);
@@ -45,7 +42,11 @@ const methods = {
       func: async (sql: string, option: any) => {
         //@ts-ignore
         const res = await globalThis.$sql_view_exec(sql, option);
-        console.log('exec res', res);
+        console.log('exec', {
+          sql,
+          bind: option,
+          res,
+        });
         return res;
       },
       args: [sql, option],
@@ -61,7 +62,6 @@ async function handleCallServiceWorker(
 ) {
   const method = payload.method;
   const args = payload.args;
-  console.log('handleCallServiceWorker', method, args);
   const resPayload: {
     result: any | null;
     error: string | null;
@@ -84,7 +84,6 @@ async function handleCallServiceWorker(
       resPayload.error = String(error);
     }
   }
-  console.log('callOpfs response', resPayload);
   sendResponse(resPayload);
 }
 

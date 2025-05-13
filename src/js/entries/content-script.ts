@@ -12,9 +12,8 @@ import { saveToDisk } from '../utils/saveToDisk';
 import { extname, resolve } from '../../lib/opfsPath';
 import { ImageExt } from '../../lib/const';
 import { decodeSAHPoolFilename, SAHPoolDirName } from '../utils/sqliteSAHPool';
-import { PromiseWithResolvers, safeRandomUUID } from '../../lib/sundry';
+import { PromiseWithResolvers } from '../../lib/sundry';
 
-console.log('Content script loaded');
 export interface FileSystemItem {
   name: string;
   kind: 'directory' | 'file' | 'dbFile';
@@ -23,7 +22,7 @@ export interface FileSystemItem {
   subname?: string;
 }
 
-const opfsMethods = {
+const contentMethods = {
   readDir: async (dirpath: string) => {
     const items: FileSystemItem[] = [];
     const _res = (await readDir(dirpath)).unwrap();
@@ -118,7 +117,7 @@ const opfsMethods = {
   readTextFile: async (path: string) => {
     const res = await readTextFile(path);
     return res.unwrap();
-  },
+  }
 };
 
 async function callService(method: string, ...args: any[]) {
@@ -142,13 +141,12 @@ async function callService(method: string, ...args: any[]) {
   return promise;
 }
 
-async function handleCallOpfs(
+async function handleCallContentMethods(
   payload: { method: string; args: any[] },
   sendResponse: (response?: any) => void
 ) {
   const method = payload.method;
   const args = payload.args;
-  console.log('handleCallOpfs', method, args);
   const resPayload: {
     result: any | null;
     error: string | null;
@@ -157,8 +155,8 @@ async function handleCallOpfs(
     error: null,
   };
   try {
-    if (method in opfsMethods) {
-      const _res = await (opfsMethods as any)[method](...args);
+    if (method in contentMethods) {
+      const _res = await (contentMethods as any)[method](...args);
       resPayload.result = _res;
     } else {
       console.error(`Method ${method} not found`, method === 'writeFileStream');
@@ -171,22 +169,20 @@ async function handleCallOpfs(
       resPayload.error = String(error);
     }
   }
-  console.log('callOpfs response', resPayload);
   sendResponse(resPayload);
 }
 
-const sqliteViewMethods = {
+const serviceMethods = {
   checkConnection: () => callService('checkConnection'),
   exec: (sql: string, option: any) => callService('exec', sql, option),
 };
 
-async function handleCallSqliteView(
+async function handleCallService(
   payload: { method: string; args: any[] },
   sendResponse: (response?: any) => void
 ) {
   const method = payload.method;
   const args = payload.args;
-  console.log('handleCallSqliteView', method, args);
   const resPayload: {
     result: any | null;
     error: string | null;
@@ -195,8 +191,8 @@ async function handleCallSqliteView(
     error: null,
   };
   try {
-    if (method in sqliteViewMethods) {
-      const methodFunc = (sqliteViewMethods as any)[method];
+    if (method in serviceMethods) {
+      const methodFunc = (serviceMethods as any)[method];
       const _res = await methodFunc(...args);
       resPayload.result = _res;
     } else {
@@ -224,11 +220,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     error: null,
   };
   switch (request.type) {
-    case 'callOpfs':
-      handleCallOpfs(request.payload, sendResponse);
+    case 'callCS':
+      handleCallContentMethods(request.payload, sendResponse);
       break;
-    case 'sqlite_view':
-      handleCallSqliteView(request.payload, sendResponse);
+    case 'callService':
+      handleCallService(request.payload, sendResponse);
       break;
     default:
       response.error = `Unknown request type: ${request.type}`;

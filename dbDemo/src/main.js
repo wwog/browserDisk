@@ -23,7 +23,7 @@ let worker = new Worker(workerUrl, {
   type: 'module',
 });
 worker.addEventListener('message', (event) => {
-  console.log('worker message', event.data);
+  // console.log('worker message', event.data);
 });
 
 let store = new Proxy(

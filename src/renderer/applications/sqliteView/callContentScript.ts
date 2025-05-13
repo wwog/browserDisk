@@ -1,11 +1,11 @@
 import { sendMessageToContent } from '../../../lib/ipc';
 
-export async function callContentScriptSqlMethod<T = any>(
+export async function callServiceWorker<T = any>(
   method: string,
   ...args: any[]
 ) {
   return sendMessageToContent<T>({
-    type: 'sqlite_view',
+    type: 'callService',
     payload: {
       method: method,
       args: args,
@@ -14,7 +14,7 @@ export async function callContentScriptSqlMethod<T = any>(
 }
 
 export async function exec<T = any>(sql: string, options?: any) {
-  return callContentScriptSqlMethod<T>('exec', sql, {
+  return callServiceWorker<T>('exec', sql, {
     rowMode: 'object',
     ...options,
   });

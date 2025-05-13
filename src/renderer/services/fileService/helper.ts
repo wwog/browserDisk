@@ -6,12 +6,12 @@ import {
   isFileHandle,
 } from '../../../lib/sundry';
 
-export async function callContentScriptOpfs(
+export async function callContentScript(
   method: string,
   ...args: any[]
 ): Promise<any> {
   return sendMessageToContent({
-    type: 'callOpfs',
+    type: 'callCS',
     payload: { method, args },
   });
 }
@@ -37,7 +37,7 @@ export async function saveToOpfs(
   for (const fsHandle of fsHandles) {
     const handleTargetPath = resolve(targetPath, fsHandle.name);
     if (isDirectoryHandle(fsHandle)) {
-      await callContentScriptOpfs('mkdir', handleTargetPath);
+      await callContentScript('mkdir', handleTargetPath);
       const fsHandles = [];
       //@ts-ignore
       for await (const [name, handle] of fsHandle.entries()) {
@@ -47,7 +47,7 @@ export async function saveToOpfs(
     } else if (isFileHandle(fsHandle)) {
       const file = await fsHandle.getFile();
       const data = new Uint8Array(await file.arrayBuffer());
-      await callContentScriptOpfs('writeFileByArray', handleTargetPath, [...data], {
+      await callContentScript('writeFileByArray', handleTargetPath, [...data], {
         create: true,
       });
     } else {

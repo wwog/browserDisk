@@ -1,6 +1,6 @@
-import { type FC, useMemo } from "react";
+import { type FC, useMemo } from 'react';
 
-import "./style.css";
+import './style.css';
 
 interface PaginationProps {
   count: number;
@@ -39,14 +39,14 @@ export const Pagination: FC<PaginationProps> = (props) => {
     }
 
     if (start > 2) {
-      buttons.unshift("...");
+      buttons.unshift('...');
       buttons.unshift(1);
     } else if (start === 2) {
       buttons.unshift(1);
     }
 
     if (end < totalPage - 1) {
-      buttons.push("...");
+      buttons.push('...');
       buttons.push(totalPage);
     } else if (end === totalPage - 1) {
       buttons.push(totalPage);
@@ -63,7 +63,7 @@ export const Pagination: FC<PaginationProps> = (props) => {
         >
           {selector.map((size) => (
             <option key={size} value={size}>
-              {size} 条/页
+              {size} /page
             </option>
           ))}
         </select>
@@ -74,22 +74,22 @@ export const Pagination: FC<PaginationProps> = (props) => {
           className="pagination-button"
           onClick={() => onChange?.(page - 1)}
           disabled={page <= 1}
-          aria-label="上一页"
+          aria-label="previous page"
         >
           ‹
         </button>
 
         {getPageNumbers().map((num, index) =>
-          num === "..." ? (
+          num === '...' ? (
             <span key={`ellipsis-${index}`} className="pagination-ellipsis">
               ...
             </span>
           ) : (
             <button
               key={num}
-              className={`pagination-button ${page === num ? "active" : ""}`}
+              className={`pagination-button ${page === num ? 'active' : ''}`}
               onClick={() => onChange?.(Number(num))}
-              aria-label={`跳转到第${num}页`}
+              aria-label={`Jump to page ${num}`}
             >
               {num}
             </button>
@@ -100,14 +100,14 @@ export const Pagination: FC<PaginationProps> = (props) => {
           className="pagination-button"
           onClick={() => onChange?.(page + 1)}
           disabled={page >= totalPage}
-          aria-label="下一页"
+          aria-label="Next page"
         >
           ›
         </button>
       </div>
 
       <div className="pagination-info">
-        共 {count} 条，每页 {pageSize} 条，当前 {page}/{totalPage} 页
+        Total Rows: {count} | {page} of {totalPage} 
       </div>
     </div>
   );

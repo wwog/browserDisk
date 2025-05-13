@@ -1,6 +1,6 @@
 import * as monaco from 'monaco-editor';
 import { getLanguage } from './utils';
-import { callContentScriptOpfs } from '../../services/fileService/helper';
+import { callContentScript } from '../../services/fileService/helper';
 
 (function ensureMonacoIsInitialized() {
   if (!monaco.languages.typescript) {
@@ -19,7 +19,7 @@ export async function saveModelToOpfs(
   model: monaco.editor.ITextModel
 ): Promise<void> {
   const content = model.getValue();
-  await callContentScriptOpfs('writeTextFileByString', filePath, content, {
+  await callContentScript('writeTextFileByString', filePath, content, {
     create: true,
   });
 }
@@ -28,7 +28,7 @@ async function createModelFromOpfsFile(
   filePath: string,
   language: string
 ): Promise<monaco.editor.ITextModel> {
-  const text = await callContentScriptOpfs('readTextFile', filePath);
+  const text = await callContentScript('readTextFile', filePath);
 
   // use filePath as the unique URI for the model
   const uri = monaco.Uri.parse(`file://${filePath}`);

@@ -3,7 +3,7 @@ import type { ApplicationProps } from '../../services/appService/types';
 //@ts-ignore
 import css from './index.module.css';
 import { If } from '../../components/Common/If';
-import { callContentScriptSqlMethod } from './callContentScript';
+import { callServiceWorker } from './callContentScript';
 import { Button } from '../../components/Button';
 import { getAllTables } from './utils';
 import { TableRender } from './TableRender';
@@ -13,7 +13,7 @@ export const SqliteView: FC<ApplicationProps> = () => {
   const [isConnected, setIsConnected] = useState(false);
   const { setTables } = sqliteViewStore();
   const connect = async () => {
-    const res = await callContentScriptSqlMethod('checkConnection');
+    const res = await callServiceWorker('checkConnection');
     setIsConnected(res);
   };
   useEffect(() => {

@@ -1,7 +1,7 @@
 import type { OpfsUsage } from '../../../lib/types';
 import { normalize, resolve } from '../../../lib/opfsPath';
 import { once } from '../../../lib/sundry';
-import { callContentScriptOpfs, getOpfsUsage, saveToOpfs } from './helper';
+import { callContentScript, getOpfsUsage, saveToOpfs } from './helper';
 import { Emitter } from '../../../lib/event';
 import type { FileSystemItem } from '../../../js/entries/content-script';
 
@@ -54,7 +54,7 @@ export class FileService {
   refresh = once(async () => {
     this._onRefreshing.fire(true);
     const currentPath = this.currentPath;
-    const res = await callContentScriptOpfs('readDir', currentPath);
+    const res = await callContentScript('readDir', currentPath);
     const usage = await getOpfsUsage();
     this.usage = usage;
     this.currentItems = res;
@@ -84,7 +84,7 @@ export class FileService {
   mkdir = async (name: string) => {
     const newPath = resolve(this.currentPath, name);
     checkPathValidity(newPath);
-    await callContentScriptOpfs('mkdir', newPath);
+    await callContentScript('mkdir', newPath);
     await this.refresh();
   };
 
@@ -97,20 +97,20 @@ export class FileService {
     const promises = paths.map((path) => {
       const newPath = resolve(this.currentPath, path);
       checkPathValidity(newPath);
-      return callContentScriptOpfs('remove', newPath);
+      return callContentScript('remove', newPath);
     });
     await Promise.all(promises);
     await this.refresh();
   };
 
   saveToDisk = async (paths: string[]) => {
-    await callContentScriptOpfs('saveToDisk', paths);
+    await callContentScript('saveToDisk', paths);
   };
 
   createFile = async (name: string) => {
     const newPath = resolve(this.currentPath, name);
     checkPathValidity(newPath);
-    await callContentScriptOpfs('createFile', newPath);
+    await callContentScript('createFile', newPath);
     await this.refresh();
   };
 }

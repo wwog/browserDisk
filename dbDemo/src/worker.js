@@ -60,7 +60,7 @@ async function execute(name, sql) {
   const result = db.exec(sql, {
     rowMode: "object",
   });
-  console.log("execute", name, sql, result);
+  // console.log("execute", name, sql, result);
   return result;
 }
 
@@ -92,7 +92,7 @@ self.addEventListener("message", async (event) => {
     data: null,
     error: null,
   };
-  console.log("worker message", event.data)
+  // console.log("worker message", event.data)
   try {
     result.data = await exportMethods[paths[0]](...args);
   } catch (error) {
