@@ -30,6 +30,9 @@ export const Table: FC = () => {
     rowData: null,
     columnId: '',
   });
+  const closeContextMenu = useCallback(() => {
+    setContextMenu((prev) => ({ ...prev, visible: false }));
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -88,7 +91,7 @@ export const Table: FC = () => {
         duration: 1000,
       });
     }
-    setContextMenu((prev) => ({ ...prev, visible: false }));
+    closeContextMenu();
   }, [contextMenu]);
 
   const handleCellContextMenu = useCallback((e: any) => {

@@ -1,21 +1,32 @@
 chrome.runtime.onConnect.addListener((port) => {
   const messageHandler = (message: any, port: chrome.runtime.Port) => {};
+  const handleUpdated = () => {
+    port.postMessage({
+      type: 'tabs_onUpdate',
+    });
+  };
   port.onMessage.addListener(messageHandler);
 
   port.onDisconnect.addListener(() => {
     port.onMessage.removeListener(messageHandler);
+    chrome.tabs.onUpdated.removeListener(handleUpdated);
   });
 
-  chrome.tabs.onUpdated.addListener(() => {
-    port.postMessage({
-      type: 'tabs_onUpdate',
-    });
-  });
+  chrome.tabs.onUpdated.addListener(handleUpdated);
 });
 
-const getCurrentId = async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tab.id!;
+const getCurrentId = () => {
+  return new Promise<number>((resolve, reject) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+      } else if (!tabs[0]?.id) {
+        reject(new Error('No active tab found'));
+      } else {
+        resolve(tabs[0].id);
+      }
+    });
+  });
 };
 
 const methods = {

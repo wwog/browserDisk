@@ -3,12 +3,7 @@
   "name": "BrowserDisk",
   "version": "1.0.0",
   "description": "Resource manager for easy management of Origin Private File System (OPFS) files, allowing you to create, import, view and edit files.",
-  "permissions": [
-    "storage",
-    "scripting",
-    "activeTab",
-    "tabs"
-  ],
+  "permissions": ["storage", "scripting", "activeTab", "tabs"],
   "devtools_page": "renderer/devtools.html",
   "icons": {
     "48": "48.png",
@@ -25,5 +20,5 @@
       "js": ["js/content-script.js"]
     }
   ],
-  "host_permissions": ["https://*/*", "http://*/*"]
+  "host_permissions": ["file:///*", "https://*/*", "http://*/*"]
 }

@@ -177,7 +177,7 @@ const serviceMethods = {
   exec: (sql: string, option: any) => callService('exec', sql, option),
 };
 
-async function handleCallService(
+async function handleCallServiceMethods(
   payload: { method: string; args: any[] },
   sendResponse: (response?: any) => void
 ) {
@@ -224,7 +224,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       handleCallContentMethods(request.payload, sendResponse);
       break;
     case 'callService':
-      handleCallService(request.payload, sendResponse);
+      handleCallServiceMethods(request.payload, sendResponse);
       break;
     default:
       response.error = `Unknown request type: ${request.type}`;
