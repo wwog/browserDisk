@@ -20,7 +20,12 @@ export const Table: FC = () => {
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
+    setPage(1);
+  }, [pageSize]);
+
+  useEffect(() => {
     needAutoSize.current = true;
+    setPage(1);
   }, [selectedTable]);
 
   const colDefs = useMemo(() => {
@@ -70,6 +75,7 @@ export const Table: FC = () => {
         width: 0,
       }}
     >
+      {/* 使用同一个示例来使用AG-Grid会需要非常多的额外逻辑，接入外部状态也不好用 */}
       <AgGridReact
         containerStyle={{
           height: 'calc(100% - 40px)',
@@ -80,7 +86,7 @@ export const Table: FC = () => {
         rowModelType="infinite"
         pagination={true}
         paginationPageSize={pageSize}
-        // suppressPaginationPanel={true}
+        suppressPaginationPanel={true}
         onGridReady={onGridReady}
         rowBuffer={pageSize} // 增加缓冲行数
         cacheBlockSize={pageSize} // 设置缓存块大小
@@ -88,7 +94,7 @@ export const Table: FC = () => {
         suppressColumnVirtualisation={true}
         defaultColDef={{
           minWidth: 100,
-          maxWidth: 300,
+          maxWidth: 350,
           floatingFilter: true,
           editable: true,
           resizable: true, // 允许调整列宽
@@ -99,7 +105,10 @@ export const Table: FC = () => {
         selector={Selector}
         page={page}
         pageSize={pageSize}
-        onChange={setPage}
+        onChange={(cur) => {
+          setPage(cur);
+          ref.current?.paginationGoToPage(cur - 1);
+        }}
         onPageSizeChange={setPageSize}
       />
     </div>

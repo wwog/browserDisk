@@ -4,7 +4,7 @@ import { QueryBuilder } from '../../queryBuilder/query';
 import { exec } from '../../callContentScript';
 
 export async function getDataByGetRowsParams(params: IGetRowsParams) {
-  const { startRow, endRow } = params;
+  const { startRow, endRow, sortModel } = params;
   const pageSize = endRow - startRow;
   const page = Math.floor(startRow / pageSize) + 1;
   const selectedTable = sqliteViewStore.getState().selectedTable;
@@ -19,11 +19,18 @@ export async function getDataByGetRowsParams(params: IGetRowsParams) {
   const query = new QueryBuilder<any>()
     .select(selectedTable.columns.map((item) => item.name))
     .from(selectedTable.name)
-    .limit(pageSize)
-    .offset(pageSize * (page - 1))
-    .toSQL();
-  const data = await exec(query[0], {
-    bind: query[1],
+    .limit(pageSize);
+
+  if (sortModel) {
+    sortModel.forEach((item) => {
+      const sortOrder = item.sort === 'asc' ? 'ASC' : 'DESC';
+      query.orderBy(item.colId, sortOrder);
+    });
+  }
+
+  const [sql, bindings] = query.offset(pageSize * (page - 1)).toSQL();
+  const data = await exec(sql, {
+    bind: bindings,
   });
   const count = await getCount(selectedTable.name);
   result.data = data;
